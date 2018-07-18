@@ -24,7 +24,8 @@ class gf256 {
 
   uint16_t log() const;
   gf256 alog(uint16_t n) const;
-  
+
+  operator uint8_t() const {return n;}
 };
 
 #endif
