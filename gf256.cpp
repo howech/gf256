@@ -42,23 +42,13 @@ const uint8_t aalog[] PROGMEM = {
  0x39, 0x4B, 0xDD, 0x7C, 0x84, 0x97, 0xA2, 0xFD, 0x1C, 0x24, 0x6C, 0xB4, 0xC7, 0x52, 0xF6, 0x01,
 };
 
-
-//gf256
-//gf256::operator +(const gf256 &b) const {
-  //return n ^ b.n;
-//}
-//
-//gf256
-//gf256::operator -(const gf256 &b) const {
-  //return n ^ b.n;
-//}
-
 gf256
 gf256::operator *(const gf256 &b) const {
   if(n==0 || b.n==0) {
     return 0;
   }
   
+  // log of the product is the sum of the logs.
   return alog(log()+b.log());
 }
 
@@ -68,13 +58,18 @@ gf256::operator /(const gf256 &b) const {
     return 0;
   }
 
+  // force a divide-by-zero error
   if(b.n==0) {
     return n/b.n;
   }
 
+  // log of a quotient is the difference beteen the logs fo numberator and denominator.
+  // addition and subraction is to be performed mod 255, but we add 255 to the difference
+  // to keep our uin116_t from underflowing.
   return alog(255 + log() - b.log() );
 }
 
+// multiplicative inverse
 gf256
 gf256::operator ~() const {
   if(n==0) {
@@ -91,7 +86,10 @@ gf256::power(int m) const {
   return alog(m*log()) ;
 }
 
-//static uint8_t lb;
+
+// inverse log base some generator (maybe 0x03)
+// argument is a uint16_t to make it easy on callers
+// to do arithmetic without worrying about over/underflow
 gf256
 gf256::alog(uint16_t m) const {
   uint8_t lb;
@@ -99,11 +97,10 @@ gf256::alog(uint16_t m) const {
   return (lb);
 }
 
+// log base some generator (same base as alog)
 uint16_t 
 gf256::log() const {
   uint8_t lb;
   memcpy_P( &lb, &(zlog[n]), 1);
   return (lb);
 }
-
-

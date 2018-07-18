@@ -4,8 +4,10 @@
 #include <inttypes.h>
 
 class gf256 {
-  public:
+  private:
   uint8_t n;
+
+  public:
 
   gf256()           {n=0;}
   gf256(uint8_t m)  {n=m;}
@@ -21,6 +23,8 @@ class gf256 {
   gf256 power(int n) const;
 
   bool operator==(const gf256 &o) const {return n == o.n;}
+  bool operator!=(const gf256 &o) const {return n != o.n;}
+  // ineqalities >= <= >  and < dont make sense
 
   uint16_t log() const;
   gf256 alog(uint16_t n) const;
